@@ -17,11 +17,19 @@
             <div class="brand-icon">🚑</div>
             <div>
                 <h1 data-i18n="appTitle">نظام إدارة الطوارئ والإسعاف الذكي</h1>
-                <p data-i18n="appSubtitle">Emergency Rescue Finder System • C# Data Structures Dashboard</p>
+                <p data-i18n="appSubtitle">Emergency Rescue Finder System • Multi-Governorate Network</p>
             </div>
         </div>
 
         <div class="header-controls">
+            <select id="govSelect" onchange="changeGovernorate()" style="border-color: var(--pink-primary); font-weight: 800;">
+                <option value="cairo">📍 القاهرة (Cairo)</option>
+                <option value="giza">📍 الجيزة (Giza)</option>
+                <option value="dakahlia">📍 الدقهلية (Dakahlia)</option>
+                <option value="alex">📍 الإسكندرية (Alexandria)</option>
+                <option value="damietta">📍 دمياط ودمياط الجديدة (Damietta & New Damietta)</option>
+            </select>
+
             <button class="btn btn-pink" id="simBtn" onclick="toggleSimulation()">
                 <span>⚡</span> <span data-i18n="autoSim">محاكاة تلقائية</span>
             </button>
@@ -40,7 +48,7 @@
             <div class="stat-card red">
                 <div class="stat-info">
                     <span data-i18n="statCritical">حالات طوارئ حرجة</span>
-                    <strong id="criticalCount">1</strong>
+                    <strong id="criticalCount">0</strong>
                 </div>
                 <div class="stat-badge">🚨</div>
             </div>
@@ -48,7 +56,7 @@
             <div class="stat-card green">
                 <div class="stat-info">
                     <span data-i18n="statNormal">حالات عادية / مستقرة</span>
-                    <strong id="normalCount">1</strong>
+                    <strong id="normalCount">0</strong>
                 </div>
                 <div class="stat-badge">💚</div>
             </div>
@@ -56,7 +64,7 @@
             <div class="stat-card pink">
                 <div class="stat-info">
                     <span data-i18n="statFleet">سيارات إسعاف جاهزة</span>
-                    <strong id="fleetCount">3</strong>
+                    <strong id="fleetCount">0</strong>
                 </div>
                 <div class="stat-badge">🚑</div>
             </div>
@@ -64,7 +72,7 @@
             <div class="stat-card green">
                 <div class="stat-info">
                     <span data-i18n="statCompleted">حالات تم إنقاذها (Linked List)</span>
-                    <strong id="historyCount">1</strong>
+                    <strong id="historyCount">0</strong>
                 </div>
                 <div class="stat-badge">🏥</div>
             </div>
@@ -77,20 +85,20 @@
             <button class="tab-btn" onclick="switchTab('history', this)" data-i18n="tabHistory">📋 سجل الحالات (Linked List)</button>
         </nav>
 
-        <!-- TAB 1: Overview (Graph + Dijkstra + Priority Queue) -->
+        <!-- TAB 1: Overview -->
         <section id="tab-overview" class="tab-section active">
             <div class="workspace-grid">
                 <div class="panel">
                     <div class="panel-header">
                         <div class="panel-title">
-                            <span data-i18n="mapTitle">خريطة المدينة وأقصر مسار</span>
+                            <span id="currentGovTitle" data-i18n="mapTitle">خريطة المنطقة وأقصر مسار</span>
                             <span class="ds-tag">Weighted Graph + Dijkstra</span>
                         </div>
                         <button class="btn" onclick="resetRoads()" data-i18n="resetRoads">🔄 تصفير الزحام</button>
                     </div>
 
                     <div id="routeBanner" class="route-banner">
-                        <span id="routeText">اضغطي على أي بلاغ في طابور الأولوية أو أضيفي بلاغاً جديداً لحساب أقصر مسار بـ Dijkstra.</span>
+                        <span id="routeText">--</span>
                         <strong id="routeEta" style="color: var(--green-normal);">--</strong>
                     </div>
 
@@ -100,7 +108,7 @@
 
                     <div class="map-legend">
                         <div class="legend-item"><span class="dot" style="background:var(--pink-primary)"></span> <span data-i18n="legHospital">مستشفى (Hospital)</span></div>
-                        <div class="legend-item"><span class="dot" style="background:#f9a8d4"></span> <span data-i18n="legDistrict">حي / تقاطع (District)</span></div>
+                        <div class="legend-item"><span class="dot" style="background:#f9a8d4"></span> <span data-i18n="legDistrict">حي / منطقة (District)</span></div>
                         <div class="legend-item"><span class="dot" style="background:var(--green-normal)"></span> <span data-i18n="legShortest">أقصر مسار (Dijkstra)</span></div>
                         <div class="legend-item"><span class="dot" style="background:var(--amber-medium)"></span> <span data-i18n="legTraffic">زحمة (اضغطي على الطريق)</span></div>
                         <div class="legend-item"><span class="dot" style="background:var(--red-emergency)"></span> <span data-i18n="legBlocked">طريق مغلق</span></div>
@@ -122,7 +130,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label data-i18n="lblLocation">موقع البلاغ (Node)</label>
+                            <label data-i18n="lblLocation">المنطقة / الحي</label>
                             <select id="locationSelect"></select>
                         </div>
 
@@ -145,7 +153,7 @@
                     <div class="panel-header" style="margin-top:6px;">
                         <div class="panel-title">
                             <span data-i18n="pqTitle">طابور الأولوية المباشر</span>
-                            <span class="ds-tag" id="pqCountBadge">2</span>
+                            <span class="ds-tag" id="pqCountBadge">0</span>
                         </div>
                         <button class="btn btn-green" onclick="dispatchHighestPriority()" data-i18n="btnDispatch">
                             🚑 إرسال إسعاف للأعلى أولوية
@@ -162,7 +170,7 @@
             <div class="panel">
                 <div class="panel-header">
                     <div class="panel-title">
-                        <span data-i18n="fleetTitle">ترتيب دور سيارات الإسعاف المتاحة</span>
+                        <span data-i18n="fleetTitle">أسطول الإسعاف</span>
                         <span class="ds-tag">FIFO Queue (First-In, First-Out)</span>
                     </div>
                     <button class="btn btn-pink" onclick="addAmbulanceUnit()" data-i18n="btnAddAmb">➕ إضافة وحدة إسعاف</button>
@@ -179,10 +187,10 @@
             <div class="panel">
                 <div class="panel-header">
                     <div class="panel-title">
-                        <span data-i18n="historyTitle">سجل الحالات التي تم التعامل معها</span>
+                        <span data-i18n="historyTitle">سجل الحالات التي تم إنقاذها</span>
                         <span class="ds-tag">Singly Linked List (Head → Next → Null)</span>
                     </div>
-                    <input type="text" id="historySearch" placeholder="🔍 ابحثي باسم المريض أو المستشفى..." oninput="renderHistory()" style="min-width:240px;" />
+                    <input type="text" id="historySearch" placeholder="🔍 ابحثي باسم المريض أو المنطقة أو المستشفى..." oninput="renderHistory()" style="min-width:260px;" />
                 </div>
                 <div class="linked-list-track" id="linkedListContainer"></div>
             </div>
