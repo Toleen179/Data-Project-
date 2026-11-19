@@ -1,0 +1,194 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Emergency Rescue Finder System | نظام إدارة الطوارئ والإسعاف</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="Style.css" />
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="brand">
+            <div class="brand-icon">🚑</div>
+            <div>
+                <h1 data-i18n="appTitle">نظام إدارة الطوارئ والإسعاف الذكي</h1>
+                <p data-i18n="appSubtitle">Emergency Rescue Finder System • C# Data Structures Dashboard</p>
+            </div>
+        </div>
+
+        <div class="header-controls">
+            <button class="btn btn-pink" id="simBtn" onclick="toggleSimulation()">
+                <span>⚡</span> <span data-i18n="autoSim">محاكاة تلقائية</span>
+            </button>
+            <button class="btn" onclick="toggleLanguage()">
+                <span>🌐</span> <span id="langLabel">English</span>
+            </button>
+            <button class="btn" onclick="toggleTheme()">
+                <span id="themeIcon">☀️</span> <span data-i18n="themeBtn">تبديل المظهر</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Top Stats -->
+        <section class="stats-grid">
+            <div class="stat-card red">
+                <div class="stat-info">
+                    <span data-i18n="statCritical">حالات طوارئ حرجة</span>
+                    <strong id="criticalCount">1</strong>
+                </div>
+                <div class="stat-badge">🚨</div>
+            </div>
+
+            <div class="stat-card green">
+                <div class="stat-info">
+                    <span data-i18n="statNormal">حالات عادية / مستقرة</span>
+                    <strong id="normalCount">1</strong>
+                </div>
+                <div class="stat-badge">💚</div>
+            </div>
+
+            <div class="stat-card pink">
+                <div class="stat-info">
+                    <span data-i18n="statFleet">سيارات إسعاف جاهزة</span>
+                    <strong id="fleetCount">3</strong>
+                </div>
+                <div class="stat-badge">🚑</div>
+            </div>
+
+            <div class="stat-card green">
+                <div class="stat-info">
+                    <span data-i18n="statCompleted">حالات تم إنقاذها (Linked List)</span>
+                    <strong id="historyCount">1</strong>
+                </div>
+                <div class="stat-badge">🏥</div>
+            </div>
+        </section>
+
+        <!-- Navigation Tabs -->
+        <nav class="tabs-bar">
+            <button class="tab-btn active" onclick="switchTab('overview', this)" data-i18n="tabOverview">🗺️ غرفة العمليات والخريطة</button>
+            <button class="tab-btn" onclick="switchTab('fleet', this)" data-i18n="tabFleet">🚑 أسطول الإسعاف (Queue)</button>
+            <button class="tab-btn" onclick="switchTab('history', this)" data-i18n="tabHistory">📋 سجل الحالات (Linked List)</button>
+        </nav>
+
+        <!-- TAB 1: Overview (Graph + Dijkstra + Priority Queue) -->
+        <section id="tab-overview" class="tab-section active">
+            <div class="workspace-grid">
+                <div class="panel">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <span data-i18n="mapTitle">خريطة المدينة وأقصر مسار</span>
+                            <span class="ds-tag">Weighted Graph + Dijkstra</span>
+                        </div>
+                        <button class="btn" onclick="resetRoads()" data-i18n="resetRoads">🔄 تصفير الزحام</button>
+                    </div>
+
+                    <div id="routeBanner" class="route-banner">
+                        <span id="routeText">اضغطي على أي بلاغ في طابور الأولوية أو أضيفي بلاغاً جديداً لحساب أقصر مسار بـ Dijkstra.</span>
+                        <strong id="routeEta" style="color: var(--green-normal);">--</strong>
+                    </div>
+
+                    <div class="map-wrapper">
+                        <svg id="cityMap" viewBox="0 0 600 400"></svg>
+                    </div>
+
+                    <div class="map-legend">
+                        <div class="legend-item"><span class="dot" style="background:var(--pink-primary)"></span> <span data-i18n="legHospital">مستشفى (Hospital)</span></div>
+                        <div class="legend-item"><span class="dot" style="background:#f9a8d4"></span> <span data-i18n="legDistrict">حي / تقاطع (District)</span></div>
+                        <div class="legend-item"><span class="dot" style="background:var(--green-normal)"></span> <span data-i18n="legShortest">أقصر مسار (Dijkstra)</span></div>
+                        <div class="legend-item"><span class="dot" style="background:var(--amber-medium)"></span> <span data-i18n="legTraffic">زحمة (اضغطي على الطريق)</span></div>
+                        <div class="legend-item"><span class="dot" style="background:var(--red-emergency)"></span> <span data-i18n="legBlocked">طريق مغلق</span></div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <span data-i18n="newReportTitle">تسجيل بلاغ طوارئ جديد</span>
+                            <span class="ds-tag">Min-Heap Priority Queue</span>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label data-i18n="lblPatient">اسم الحالة / المريض</label>
+                            <input type="text" id="patientInput" placeholder="مثال: سارة محمود" />
+                        </div>
+
+                        <div class="form-group">
+                            <label data-i18n="lblLocation">موقع البلاغ (Node)</label>
+                            <select id="locationSelect"></select>
+                        </div>
+
+                        <div class="form-group">
+                            <label data-i18n="lblSeverity">درجة الخطورة (الأولوية)</label>
+                            <select id="severitySelect">
+                                <option value="1">🔴 1 - طوارئ حرجة جداً (Critical)</option>
+                                <option value="2">🟠 2 - حالة متوسطة (Medium)</option>
+                                <option value="3">🟢 3 - حالة عادية / مستقرة (Normal)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" style="justify-content:flex-end;">
+                            <button class="btn btn-pink" style="width:100%; justify-content:center; height:40px;" onclick="addNewCase()" data-i18n="btnAddCase">
+                                ➕ إضافة لطابور الأولوية
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="panel-header" style="margin-top:6px;">
+                        <div class="panel-title">
+                            <span data-i18n="pqTitle">طابور الأولوية المباشر</span>
+                            <span class="ds-tag" id="pqCountBadge">2</span>
+                        </div>
+                        <button class="btn btn-green" onclick="dispatchHighestPriority()" data-i18n="btnDispatch">
+                            🚑 إرسال إسعاف للأعلى أولوية
+                        </button>
+                    </div>
+
+                    <div class="queue-list" id="priorityQueueList"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: Ambulance FIFO Queue -->
+        <section id="tab-fleet" class="tab-section">
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <span data-i18n="fleetTitle">ترتيب دور سيارات الإسعاف المتاحة</span>
+                        <span class="ds-tag">FIFO Queue (First-In, First-Out)</span>
+                    </div>
+                    <button class="btn btn-pink" onclick="addAmbulanceUnit()" data-i18n="btnAddAmb">➕ إضافة وحدة إسعاف</button>
+                </div>
+                <p style="font-size:0.88rem; color:var(--text-secondary);" data-i18n="fleetDesc">
+                    السيارة الموجودة في مقدمة الطابور (Front) تخرج فوراً عند الإرسال، ثم تعود لنهاية الطابور (Rear).
+                </p>
+                <div class="fleet-row" id="ambulanceQueueContainer"></div>
+            </div>
+        </section>
+
+        <!-- TAB 3: Singly Linked List History -->
+        <section id="tab-history" class="tab-section">
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <span data-i18n="historyTitle">سجل الحالات التي تم التعامل معها</span>
+                        <span class="ds-tag">Singly Linked List (Head → Next → Null)</span>
+                    </div>
+                    <input type="text" id="historySearch" placeholder="🔍 ابحثي باسم المريض أو المستشفى..." oninput="renderHistory()" style="min-width:240px;" />
+                </div>
+                <div class="linked-list-track" id="linkedListContainer"></div>
+            </div>
+        </section>
+    </main>
+
+    <script src="Script.js"></script>
+</body>
+</html>
