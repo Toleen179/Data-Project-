@@ -1,0 +1,6 @@
+@EmergencyRescueSystem_HostAddress = http://localhost:5195
+
+GET {{EmergencyRescueSystem_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
