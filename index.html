@@ -3,17 +3,12 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Emergency Rescue Finder System | نظام إدارة الطوارئ والإسعاف</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="Style.css" />
+    <title>نظام إدارة الطوارئ والإسعاف الذكي</title>
+    <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
-    <!-- Header -->
-    <header>
-        <div class="brand">
+    <header class="topbar">
+        <div class="brand-block">
             <div class="brand-icon">🚑</div>
             <div>
                 <h1 data-i18n="appTitle">نظام إدارة الطوارئ والإسعاف الذكي</h1>
@@ -21,178 +16,202 @@
             </div>
         </div>
 
-        <div class="header-controls">
-            <select id="govSelect" onchange="changeGovernorate()" style="border-color: var(--pink-primary); font-weight: 800;">
-                <option value="cairo">📍 القاهرة (Cairo)</option>
-                <option value="giza">📍 الجيزة (Giza)</option>
-                <option value="dakahlia">📍 الدقهلية (Dakahlia)</option>
-                <option value="alex">📍 الإسكندرية (Alexandria)</option>
-                <option value="damietta">📍 دمياط ودمياط الجديدة (Damietta & New Damietta)</option>
+        <div class="top-controls">
+            <select id="govSelect" class="gov-select" onchange="changeGovernorate()">
+                <option value="damietta" selected>دمياط ودمياط الجديدة</option>
+                <option value="cairo">القاهرة</option>
+                <option value="giza">الجيزة</option>
+                <option value="dakahlia">الدقهلية</option>
+                <option value="alex">الإسكندرية</option>
             </select>
 
-            <button class="btn btn-pink" id="simBtn" onclick="toggleSimulation()">
-                <span>⚡</span> <span data-i18n="autoSim">محاكاة تلقائية</span>
+            <button id="simBtn" class="btn btn-outline" onclick="toggleSimulation()">
+                <span>⚡</span>
+                <span data-i18n="autoSim">محاكاة تلقائية</span>
             </button>
-            <button class="btn" onclick="toggleLanguage()">
-                <span>🌐</span> <span id="langLabel">English</span>
+
+            <button class="btn btn-outline" onclick="toggleTheme()">
+                <span id="themeIcon">☀️</span>
+                <span data-i18n="themeBtn">تبديل المظهر</span>
             </button>
-            <button class="btn" onclick="toggleTheme()">
-                <span id="themeIcon">☀️</span> <span data-i18n="themeBtn">تبديل المظهر</span>
+
+            <button class="btn btn-outline" onclick="toggleLanguage()">
+                <span>🌐</span>
+                <span id="langLabel">English</span>
             </button>
         </div>
     </header>
 
-    <main class="container">
-        <!-- Top Stats -->
-        <section class="stats-grid">
-            <div class="stat-card red">
-                <div class="stat-info">
-                    <span data-i18n="statCritical">حالات طوارئ حرجة</span>
-                    <strong id="criticalCount">0</strong>
-                </div>
-                <div class="stat-badge">🚨</div>
-            </div>
+    <section class="stats-grid">
+        <div class="stat-card critical">
+            <div class="stat-label" data-i18n="statCritical">حالات طوارئ حرجة</div>
+            <div class="stat-value" id="criticalCount">0</div>
+        </div>
+        <div class="stat-card normal">
+            <div class="stat-label" data-i18n="statNormal">حالات عادية / مستقرة</div>
+            <div class="stat-value" id="normalCount">0</div>
+        </div>
+        <div class="stat-card fleet">
+            <div class="stat-label" data-i18n="statFleet">سيارات إسعاف جاهزة</div>
+            <div class="stat-value" id="fleetCount">0</div>
+        </div>
+        <div class="stat-card completed">
+            <div class="stat-label" data-i18n="statCompleted">حالات تم إنقاذها (Linked List)</div>
+            <div class="stat-value" id="historyCount">0</div>
+        </div>
+    </section>
 
-            <div class="stat-card green">
-                <div class="stat-info">
-                    <span data-i18n="statNormal">حالات عادية / مستقرة</span>
-                    <strong id="normalCount">0</strong>
-                </div>
-                <div class="stat-badge">💚</div>
-            </div>
+    <nav class="tabs-bar">
+        <button class="tab-btn active" onclick="switchTab('overview', this)" data-i18n="tabOverview">
+            🗺️ غرفة العمليات والخريطة
+        </button>
+        <button class="tab-btn" onclick="switchTab('fleet', this)" data-i18n="tabFleet">
+            🚑 أسطول الإسعاف (Queue)
+        </button>
+        <button class="tab-btn" onclick="switchTab('history', this)" data-i18n="tabHistory">
+            📋 سجل الحالات (Linked List)
+        </button>
+    </nav>
 
-            <div class="stat-card pink">
-                <div class="stat-info">
-                    <span data-i18n="statFleet">سيارات إسعاف جاهزة</span>
-                    <strong id="fleetCount">0</strong>
-                </div>
-                <div class="stat-badge">🚑</div>
-            </div>
-
-            <div class="stat-card green">
-                <div class="stat-info">
-                    <span data-i18n="statCompleted">حالات تم إنقاذها (Linked List)</span>
-                    <strong id="historyCount">0</strong>
-                </div>
-                <div class="stat-badge">🏥</div>
-            </div>
-        </section>
-
-        <!-- Navigation Tabs -->
-        <nav class="tabs-bar">
-            <button class="tab-btn active" onclick="switchTab('overview', this)" data-i18n="tabOverview">🗺️ غرفة العمليات والخريطة</button>
-            <button class="tab-btn" onclick="switchTab('fleet', this)" data-i18n="tabFleet">🚑 أسطول الإسعاف (Queue)</button>
-            <button class="tab-btn" onclick="switchTab('history', this)" data-i18n="tabHistory">📋 سجل الحالات (Linked List)</button>
-        </nav>
-
-        <!-- TAB 1: Overview -->
+    <main>
+        <!-- Tab 1: Command Map & Dispatch -->
         <section id="tab-overview" class="tab-section active">
             <div class="workspace-grid">
-                <div class="panel">
-                    <div class="panel-header">
-                        <div class="panel-title">
-                            <span id="currentGovTitle" data-i18n="mapTitle">خريطة المنطقة وأقصر مسار</span>
-                            <span class="ds-tag">Weighted Graph + Dijkstra</span>
+                <div class="card map-card">
+                    <div class="card-header">
+                        <div>
+                            <h2 id="currentGovTitle">خريطة دمياط ودمياط الجديدة</h2>
                         </div>
-                        <button class="btn" onclick="resetRoads()" data-i18n="resetRoads">🔄 تصفير الزحام</button>
-                    </div>
-
-                    <div id="routeBanner" class="route-banner">
-                        <span id="routeText">--</span>
-                        <strong id="routeEta" style="color: var(--green-normal);">--</strong>
-                    </div>
-
-                    <div class="map-wrapper">
-                        <svg id="cityMap" viewBox="0 0 600 400"></svg>
-                    </div>
-
-                    <div class="map-legend">
-                        <div class="legend-item"><span class="dot" style="background:var(--pink-primary)"></span> <span data-i18n="legHospital">مستشفى (Hospital)</span></div>
-                        <div class="legend-item"><span class="dot" style="background:#f9a8d4"></span> <span data-i18n="legDistrict">حي / منطقة (District)</span></div>
-                        <div class="legend-item"><span class="dot" style="background:var(--green-normal)"></span> <span data-i18n="legShortest">أقصر مسار (Dijkstra)</span></div>
-                        <div class="legend-item"><span class="dot" style="background:var(--amber-medium)"></span> <span data-i18n="legTraffic">زحمة (اضغطي على الطريق)</span></div>
-                        <div class="legend-item"><span class="dot" style="background:var(--red-emergency)"></span> <span data-i18n="legBlocked">طريق مغلق</span></div>
-                    </div>
-                </div>
-
-                <div class="panel">
-                    <div class="panel-header">
-                        <div class="panel-title">
-                            <span data-i18n="newReportTitle">تسجيل بلاغ طوارئ جديد</span>
-                            <span class="ds-tag">Min-Heap Priority Queue</span>
-                        </div>
-                    </div>
-
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label data-i18n="lblPatient">اسم الحالة / المريض</label>
-                            <input type="text" id="patientInput" placeholder="مثال: سارة محمود" />
-                        </div>
-
-                        <div class="form-group">
-                            <label data-i18n="lblLocation">المنطقة / الحي</label>
-                            <select id="locationSelect"></select>
-                        </div>
-
-                        <div class="form-group">
-                            <label data-i18n="lblSeverity">درجة الخطورة (الأولوية)</label>
-                            <select id="severitySelect">
-                                <option value="1">🔴 1 - طوارئ حرجة جداً (Critical)</option>
-                                <option value="2">🟠 2 - حالة متوسطة (Medium)</option>
-                                <option value="3">🟢 3 - حالة عادية / مستقرة (Normal)</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group" style="justify-content:flex-end;">
-                            <button class="btn btn-pink" style="width:100%; justify-content:center; height:40px;" onclick="addNewCase()" data-i18n="btnAddCase">
-                                ➕ إضافة لطابور الأولوية
+                        <div class="card-badges">
+                            <span class="pill-badge">Weighted Graph + Dijkstra</span>
+                            <button class="btn btn-sm btn-outline" onclick="resetRoads()" data-i18n="resetRoads">
+                                🔄 تصفير الزحام
                             </button>
                         </div>
                     </div>
 
-                    <div class="panel-header" style="margin-top:6px;">
-                        <div class="panel-title">
-                            <span data-i18n="pqTitle">طابور الأولوية المباشر</span>
-                            <span class="ds-tag" id="pqCountBadge">0</span>
+                    <div id="routeBanner" class="route-banner">
+                        <span id="routeText">اختر منطقة أو أضف بلاغاً لعرض أقصر مسار</span>
+                        <strong id="routeEta">--</strong>
+                    </div>
+
+                    <div class="map-canvas-wrap">
+                        <svg id="cityMap" viewBox="0 0 600 410" class="city-map"></svg>
+                    </div>
+
+                    <div class="legend-row">
+                        <span><i class="dot hospital"></i> <span data-i18n="legHospital">مستشفى (Hospital)</span></span>
+                        <span><i class="dot district"></i> <span data-i18n="legDistrict">حي / منطقة (District)</span></span>
+                        <span><i class="line shortest"></i> <span data-i18n="legShortest">أقصر مسار (Dijkstra)</span></span>
+                        <span><i class="line traffic"></i> <span data-i18n="legTraffic">زحمة (اضغطي على الطريق)</span></span>
+                        <span><i class="line blocked"></i> <span data-i18n="legBlocked">طريق مغلق</span></span>
+                    </div>
+                </div>
+
+                <div class="right-column">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 data-i18n="newReportTitle">تسجيل بلاغ طوارئ جديد</h2>
+                            <span class="pill-badge">Min-Heap Priority Queue</span>
                         </div>
-                        <button class="btn btn-green" onclick="dispatchHighestPriority()" data-i18n="btnDispatch">
-                            🚑 إرسال إسعاف للأعلى أولوية
-                        </button>
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label data-i18n="lblPatient">اسم الحالة / المريض</label>
+                                <input id="patientInput" type="text" placeholder="مثال: سارة محمود" />
+                            </div>
+
+                            <div class="form-group">
+                                <label data-i18n="lblLocation">المنطقة / الحي</label>
+                                <select id="locationSelect"></select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>رقم الموبايل</label>
+                                <input id="phoneInput" type="text" placeholder="مثال: 01012345678" />
+                            </div>
+
+                            <div class="form-group">
+                                <label>فصيلة الدم</label>
+                                <select id="bloodSelect">
+                                    <option value="O+">O+</option>
+                                    <option value="O-">O-</option>
+                                    <option value="A+">A+</option>
+                                    <option value="A-">A-</option>
+                                    <option value="B+">B+</option>
+                                    <option value="B-">B-</option>
+                                    <option value="AB+">AB+</option>
+                                    <option value="AB-">AB-</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label data-i18n="lblSeverity">درجة الخطورة (الأولوية)</label>
+                                <select id="severitySelect">
+                                    <option value="1">🔴 1 - طوارئ حرجة جداً (Critical)</option>
+                                    <option value="2">🟡 2 - حالة متوسطة (Medium)</option>
+                                    <option value="3">🟢 3 - حالة عادية (Normal)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="actions-row">
+                            <button class="btn btn-primary" onclick="addNewCase()" data-i18n="btnAddCase">
+                                ➕ إضافة لطابور الأولوية
+                            </button>
+                            <button id="dispatchBtn" class="btn btn-success" onclick="dispatchHighestPriority()" data-i18n="btnDispatch">
+                                🚑 إرسال إسعاف للأعلى أولوية
+                            </button>
+                        </div>
+
+                        <div id="liveDispatchStatus" class="dispatch-status-box"></div>
+                        <div id="arrivalMessageBox" class="arrival-toast" style="display: none;"></div>
                     </div>
 
-                    <div class="queue-list" id="priorityQueueList"></div>
+                    <div class="card or-command-card" id="orCommandCard">
+                        <div class="card-header">
+                            <div>
+                                <h3>🏥 أوامر تجهيز غرفة العمليات</h3>
+                                <small class="muted-note">تنبيه فوري عند خروج الإسعاف مع إبراز فصيلة الدم للحالات الحرجة</small>
+                            </div>
+                            <span class="badge" id="orOrdersBadge">0</span>
+                        </div>
+                        <div id="orOrdersList" class="or-orders-list"></div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 data-i18n="pqTitle">طابور الأولوية المباشر</h2>
+                            <span class="badge" id="pqCountBadge">0</span>
+                        </div>
+                        <div id="priorityQueueList" class="queue-list"></div>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- TAB 2: Ambulance FIFO Queue -->
+        <!-- Tab 2: Fleet -->
         <section id="tab-fleet" class="tab-section">
-            <div class="panel">
-                <div class="panel-header">
-                    <div class="panel-title">
-                        <span data-i18n="fleetTitle">أسطول الإسعاف</span>
-                        <span class="ds-tag">FIFO Queue (First-In, First-Out)</span>
-                    </div>
-                    <button class="btn btn-pink" onclick="addAmbulanceUnit()" data-i18n="btnAddAmb">➕ إضافة وحدة إسعاف</button>
+            <div class="card">
+                <div class="card-header">
+                    <h2 data-i18n="fleetTitle">أسطول الإسعاف</h2>
+                    <button class="btn btn-primary" onclick="addAmbulanceUnit()" data-i18n="btnAddAmb">
+                        ➕ إضافة وحدة إسعاف
+                    </button>
                 </div>
-                <p style="font-size:0.88rem; color:var(--text-secondary);" data-i18n="fleetDesc">
-                    السيارة الموجودة في مقدمة الطابور (Front) تخرج فوراً عند الإرسال، ثم تعود لنهاية الطابور (Rear).
-                </p>
-                <div class="fleet-row" id="ambulanceQueueContainer"></div>
+                <p class="muted-note" data-i18n="fleetDesc"></p>
+                <div id="ambulanceQueueContainer" class="fleet-grid"></div>
             </div>
         </section>
 
-        <!-- TAB 3: Singly Linked List History -->
+        <!-- Tab 3: History -->
         <section id="tab-history" class="tab-section">
-            <div class="panel">
-                <div class="panel-header">
-                    <div class="panel-title">
-                        <span data-i18n="historyTitle">سجل الحالات التي تم إنقاذها</span>
-                        <span class="ds-tag">Singly Linked List (Head → Next → Null)</span>
-                    </div>
-                    <input type="text" id="historySearch" placeholder="🔍 ابحثي باسم المريض أو المنطقة أو المستشفى..." oninput="renderHistory()" style="min-width:260px;" />
+            <div class="card">
+                <div class="card-header">
+                    <h2 data-i18n="historyTitle">سجل الحالات التي تم إنقاذها</h2>
+                    <input id="historySearch" type="text" class="search-input" placeholder="بحث بالاسم، الفصيلة، المستشفى أو المحافظة..." oninput="renderHistory()" />
                 </div>
-                <div class="linked-list-track" id="linkedListContainer"></div>
+                <div id="linkedListContainer" class="linked-list-wrap"></div>
             </div>
         </section>
     </main>
